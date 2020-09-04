@@ -11,7 +11,6 @@ async function addUsernameToCommitMessage() {
     const messageFile = process.argv[2];
     const message = fs.readFileSync(messageFile, 'utf8').trim();
     const username = await getCurrentUser();
-    console.log()
     fs.writeFileSync(messageFile, `#${message} - ${username}`, { encoding: 'utf-8' });
     process.exit(0)
 }
