@@ -8,10 +8,12 @@ const exec = util.promisify(childProcessExec);
 addUsernameToCommitMessage();
 
 async function addUsernameToCommitMessage() {
-    const message = fs.readFileSync(process.argv[2], 'utf8').trim();
-    const user = getCurrentUser();
-    console.log(`#${message}`)
-    process.exit(1)
+    const messageFile = process.argv[2];
+    const message = fs.readFileSync(messageFile, 'utf8').trim();
+    const username = await getCurrentUser();
+    console.log()
+    fs.writeFileSync(messageFile, `#${message} - ${username}`, { encoding: 'utf-8' });
+    process.exit(0)
 }
 
 async function getCurrentUser() {
