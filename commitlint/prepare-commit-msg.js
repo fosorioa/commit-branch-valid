@@ -10,8 +10,10 @@ addUsernameToCommitMessage();
 async function addUsernameToCommitMessage() {
     const messageFile = process.argv[2];
     const message = fs.readFileSync(messageFile, 'utf8').trim();
-    const username = await getCurrentUser();
-    fs.writeFileSync(messageFile, `#${message} - ${username}`, { encoding: 'utf-8' });
+    const user = await getCurrentUser();
+    const names = user.match(/^.*?(?=<)/g);
+    const email = user.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
+    fs.writeFileSync(messageFile, `#${message} - ${username}${email}`, { encoding: 'utf-8' });
     process.exit(0)
 }
 
