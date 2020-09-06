@@ -21,7 +21,7 @@ function Message(filename) {
     }
 }
 
-function messageFilename() { return process.argv[2] };
+function messageFilename() { return process.argv[2]; };
 
 async function getUser() {
     const commiter = await getCommitter();
