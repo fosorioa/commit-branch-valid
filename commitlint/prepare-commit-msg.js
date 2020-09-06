@@ -2,27 +2,38 @@
 const childProcessExec = require('child_process').exec;
 const util = require('util');
 const fs = require('fs');
-
 const exec = util.promisify(childProcessExec);
 
-addUsernameToCommitMessage();
+addUserToCommitMessage();
 
-async function addUsernameToCommitMessage() {
-    const messageFile = process.argv[2];
-    const message = fs.readFileSync(messageFile, 'utf8').trim();
-    const user = await getCurrentUser();
-    const names = user.match(/^.*?(?=<)/g);
-    const email = user.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
-    fs.writeFileSync(messageFile, `#${message} - ${names}${email}`, { encoding: 'utf-8' });
+async function addUserToCommitMessage() {
+    const message = new Message(messageFilename());
+    const user = await getUser();
+    message.update(`#${message.read()} - ${user.username} ${user.email}`)
     process.exit(0)
 }
 
-async function getCurrentUser() {
+function Message(filename) {
+    this.filename = filename;
+    return {
+        read: () => fs.readFileSync(this.filename, 'utf8').trim(),
+        update: (msg) => fs.writeFileSync(this.filename, msg, { encoding: 'utf-8' })
+    }
+}
 
-    const usernamOutput = await exec('git var GIT_COMMITTER_IDENT');
-    if (usernamOutput.stderr) {
+const messageFilename = () => process.argv[2];
+
+async function getUser() {
+    const commiter = await getCommitter();
+    const username = commiter.match(/^.*?(?=<)/g);
+    const email = commiter.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi);
+    return { username: username[0].trim(), email: email[0] };
+}
+
+async function getCommitter() {
+    const commiter = await exec('git var GIT_COMMITTER_IDENT');
+    if (commiter.stderr) {
         throw new Error(stderr);
     }
-    const username = usernamOutput.stdout;
-    return username;;
+    return commiter.stdout;
 }
