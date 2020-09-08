@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-export default function Message(filename) {
+module.exports = function (filename) {
     this.filename = filename;
     return {
         read: () => fs.readFileSync(this.filename, 'utf8').trim(),

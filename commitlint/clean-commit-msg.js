@@ -17,6 +17,6 @@ function messageFilename() { return process.argv[2]; };
 function cleanUpMessage(message) {
     const currentMsgContent = message.read();
     if (currentMsgContent.startsWith('#')) {
-        message(currentMsgContent.slice(1));
+        message.update(currentMsgContent.slice(1));
     }
 }
