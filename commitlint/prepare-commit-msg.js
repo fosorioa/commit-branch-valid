@@ -1,24 +1,16 @@
 #!/usr/bin/env node
 const childProcessExec = require('child_process').exec;
 const util = require('util');
-const fs = require('fs');
 const exec = util.promisify(childProcessExec);
+const Message = require('./Message')
 
 addUserToCommitMessage();
 
 async function addUserToCommitMessage() {
     const message = new Message(messageFilename());
     const user = await getUser();
-    message.update(`#${message.read()} - ${user.username} ${user.email}`)
+    message.update(`#${message.read()} - ${user.username} <${user.email}>`)
     process.exit(0)
-}
-
-function Message(filename) {
-    this.filename = filename;
-    return {
-        read: () => fs.readFileSync(this.filename, 'utf8').trim(),
-        update: (msg) => fs.writeFileSync(this.filename, msg, { encoding: 'utf-8' })
-    }
 }
 
 function messageFilename() { return process.argv[2]; };
