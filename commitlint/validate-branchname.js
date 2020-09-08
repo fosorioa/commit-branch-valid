@@ -4,8 +4,6 @@ const util = require('util');
 const exec = util.promisify(childProcessExec);
 const Message = require('./Message')
 
-console.log('parameters' + process.argv[2]);
-
 validateBranchName();
 
 async function validateBranchName() {
